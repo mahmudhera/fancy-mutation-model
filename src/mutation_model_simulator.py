@@ -49,6 +49,7 @@ def parse_args():
     parser.add_argument('--ps', type=float, default=0.1, help='substitution probability')
     parser.add_argument('--pd', type=float, default=0.1, help='deletion probability')
     parser.add_argument('--d', type=float, default=1.0, help='average length to insert')
+    parser.add_argument('--num_sim', type=int, default=100, help='num of simulations to run')
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -58,9 +59,21 @@ if __name__ == '__main__':
     p_s = args.ps
     p_d = args.pd
     d = args.d
+    num_simulations = args.num_sim
 
     mm = mutation_model(seed, orig_len, p_s, p_d, d)
 
+    print('The original string is:')
     print( mm.generate_random_string() )
-    print( mm.mutate_string() )
-    print( mm.mutate_string() )
+
+    print('Now simulating....')
+    lengths = []
+    for i in range(num_simulations):
+        lengths.append( len(mm.mutate_string()) )
+
+    print('Average length of the mutated string:')
+    print( 1.0*sum(lengths)/len(lengths) )
+
+    print('By formula:')
+    exp_len = orig_len * (1.0 - p_d + d)
+    print(exp_len)
