@@ -1,4 +1,5 @@
 import numpy as np
+import argparse
 
 alphabet = ['A', 'C', 'G', 'T']
 substitute_dic = {  'A':['C', 'G', 'T'],
@@ -41,7 +42,25 @@ class mutation_model:
 
         return ''.join(final_str_list)
 
+def parse_args():
+    parser = argparse.ArgumentParser(description='A fancy mutation model supporting insertion, deletion and substitution.')
+    parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--len', type=int, default=10000, help='length of the original string')
+    parser.add_argument('--ps', type=float, default=0.1, help='substitution probability')
+    parser.add_argument('--pd', type=float, default=0.1, help='deletion probability')
+    parser.add_argument('--d', type=float, default=1.0, help='average length to insert')
+    return parser.parse_args()
+
 if __name__ == '__main__':
-    mm = mutation_model(2, 10, 0.2, 0.2, 1)
+    args = parse_args()
+    seed = args.seed
+    orig_len = args.len
+    p_s = args.ps
+    p_d = args.pd
+    d = args.d
+
+    mm = mutation_model(seed, orig_len, p_s, p_d, d)
+
     print( mm.generate_random_string() )
+    print( mm.mutate_string() )
     print( mm.mutate_string() )
