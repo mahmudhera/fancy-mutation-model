@@ -52,6 +52,12 @@ def parse_args():
     parser.add_argument('--num_sim', type=int, default=100, help='num of simulations to run')
     return parser.parse_args()
 
+def generate_kmers(str, k):
+    kmer_set = set()
+    for i in range(len(str)-k+1):
+        kmer_set.add( str[i:i+k] )
+    return kmer_set
+
 if __name__ == '__main__':
     args = parse_args()
     seed = args.seed
@@ -60,16 +66,23 @@ if __name__ == '__main__':
     p_d = args.pd
     d = args.d
     num_simulations = args.num_sim
+    k = 9
 
     mm = mutation_model(seed, orig_len, p_s, p_d, d)
 
     print('The original string is:')
-    print( mm.generate_random_string() )
+    str_orig = mm.generate_random_string()
+    print( str_orig )
 
     print('Now simulating....')
     lengths = []
+    list_num_shared_kmers = []
     for i in range(num_simulations):
-        lengths.append( len(mm.mutate_string()) )
+        mutated_string = mm.mutate_string()
+        lengths.append( len(mutated_string) )
+        kmer_set_orig = generate_kmers(str_orig, k)
+        kmer_set_mutated = generate_kmers(mutated_string, k)
+        list_num_shared_kmers.append( len(kmer_set_orig.intersection(kmer_set_mutated)) )
 
     print('Average length of the mutated string:')
     print( 1.0*sum(lengths)/len(lengths) )
@@ -77,3 +90,10 @@ if __name__ == '__main__':
     print('By formula:')
     exp_len = orig_len * (1.0 - p_d + d)
     print(exp_len)
+
+    print('Average num of shared kmers:')
+    print( 1.0 * sum(list_num_shared_kmers)/len(list_num_shared_kmers) )
+
+    print('By formula:')
+    exp_num_shared = (1.0 - p_d - p_s)**k * (1.0 / (1.0+d))**(k-1) * (orig_len-k+1)
+    print(exp_num_shared)
