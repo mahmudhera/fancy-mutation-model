@@ -1,5 +1,6 @@
 import numpy as np
 import argparse
+from tqdm import tqdm
 
 alphabet = ['A', 'C', 'G', 'T']
 substitute_dic = {  'A':['C', 'G', 'T'],
@@ -66,7 +67,7 @@ if __name__ == '__main__':
     p_d = args.pd
     d = args.d
     num_simulations = args.num_sim
-    k = 9
+    k = 21
 
     mm = mutation_model(seed, orig_len, p_s, p_d, d)
 
@@ -77,7 +78,7 @@ if __name__ == '__main__':
     print('Now simulating....')
     lengths = []
     list_num_shared_kmers = []
-    for i in range(num_simulations):
+    for i in tqdm(range(num_simulations)):
         mutated_string = mm.mutate_string()
         lengths.append( len(mutated_string) )
         kmer_set_orig = generate_kmers(str_orig, k)
@@ -95,5 +96,5 @@ if __name__ == '__main__':
     print( 1.0 * sum(list_num_shared_kmers)/len(list_num_shared_kmers) )
 
     print('By formula:')
-    exp_num_shared = (1.0 - p_d - p_s)**k * (1.0 / (1.0+d))**(k-1) * (orig_len-k+1)
+    exp_num_shared = (orig_len-k+1) * (1.0 - p_d - p_s)**k * (1.0 / (1.0+d))**(k-1)
     print(exp_num_shared)
