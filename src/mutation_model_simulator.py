@@ -55,9 +55,12 @@ def parse_args():
 
 def generate_kmers(str, k):
     kmer_set = set()
+    num_spur = 0
     for i in range(len(str)-k+1):
+        if str[i:i+k] in kmer_set:
+            num_spur += 1
         kmer_set.add( str[i:i+k] )
-    return kmer_set
+    return kmer_set, num_spur
 
 if __name__ == '__main__':
     args = parse_args()
@@ -81,8 +84,10 @@ if __name__ == '__main__':
     for i in tqdm(range(num_simulations)):
         mutated_string = mm.mutate_string()
         lengths.append( len(mutated_string) )
-        kmer_set_orig = generate_kmers(str_orig, k)
-        kmer_set_mutated = generate_kmers(mutated_string, k)
+        kmer_set_orig, num_spurious_orig = generate_kmers(str_orig, k)
+        kmer_set_mutated, num_spurious_mutated = generate_kmers(mutated_string, k)
+        #print('Num spurious in orig: ' + str(num_spurious_orig))
+        #print('Num spurious in mutated: ' + str(num_spurious_mutated))
         list_num_shared_kmers.append( len(kmer_set_orig.intersection(kmer_set_mutated)) )
 
     print('Average length of the mutated string:')
