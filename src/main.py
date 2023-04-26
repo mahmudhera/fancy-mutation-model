@@ -1,5 +1,7 @@
 from mutation_model_simulator import mutation_model
 import argparse
+import pygtrie as trie
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -21,6 +23,56 @@ def string_to_kmers(input_str, k):
     return kmer_list
 
 
+def observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str):
+    # build prefix tree with kmers in mutated str -> tree1
+    tree1 = trie.CharTrie()
+    k = len(kmers_in_orig_str[0])
+    for kmer in kmers_in_mutated_str:
+        for i in range(1, k+1):
+            substring = kmer[:i]
+            tree1[substring] = substring
+            #print(f'Inserting {substring} in tree1')
+
+    # build prefix tree with reversed kmers in mutated str -> tree2
+    tree2 = trie.CharTrie()
+    for kmer in kmers_in_mutated_str:
+        kmer_reversed = kmer[::-1]
+        for i in range(1, k+1):
+            substring = kmer_reversed[:i]
+            tree2[substring] = substring
+            #print(f'Inserting {substring} in tree2')
+
+    num_observed_only_one_deletion = 0
+    observed_kmers_only_one_deletion = []
+    # for all kmers in orig str:
+    for kmer in kmers_in_orig_str:
+        print(f'Working with kmer: {kmer}')
+        # len1 = find len of longest prefix of kmer in tree1
+        longest_pref = tree1.longest_prefix(kmer).key
+        print(f'Longest prefix in tree1: {longest_pref}')
+        len1 = 0
+        if longest_pref is not None:
+            len1 = len(longest_pref)
+
+        # len2 = find len of longest prefix of rev_kmer in tree2
+        kmer_reversed = kmer[::-1]
+        longest_pref = tree2.longest_prefix(kmer_reversed).key
+        if longest_pref is not None:
+            print(f'Longest suffix in tree2: {longest_pref[::-1]}')
+        else:
+            print(f'Longest suffix in tree2: {longest_pref}')
+        len2 = 0
+        if longest_pref is not None:
+            len2 = len(longest_pref)
+
+        # if len1 + len2 = k - 1 then mark it as one observed
+        if len1 == k-1 or len2 == k-1 or len1 + len2 == k - 1:
+            num_observed_only_one_deletion += 1
+            observed_kmers_only_one_deletion.append(kmer)
+
+    return num_observed_only_one_deletion, observed_kmers_only_one_deletion, tree1, tree2
+
+
 if __name__ == '__main__':
     str_len, p_s, p_d, d, k = parse_arguments()
     seed = 0
@@ -30,11 +82,18 @@ if __name__ == '__main__':
     str_orig = mm.generate_random_string()
     mutated_string = mm.mutate_string()
 
+    # TEST
+    str_orig       = 'ACGTGCAGCT'
+    mutated_string = 'ACGTGAGCT'
+    k              =  5
+
     # generate kmers from these two strings
-    kmers_orig_set = string_to_kmers(str_orig, k)
-    kmers_mutated_set = string_to_kmers(mutated_string, k)
+    kmers_in_orig_str = string_to_kmers(str_orig, k)
+    kmers_in_mutated_str = string_to_kmers(mutated_string, k)
 
     # observe three quantities
-    # ???? HOW ????
+    num_observed_only_one_deletion, observed_kmers_only_one_deletion, t1, t2 = observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str)
+    print(num_observed_only_one_deletion)
+    print(observed_kmers_only_one_deletion)
 
     # solve and find three parameters

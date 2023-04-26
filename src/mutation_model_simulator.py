@@ -46,6 +46,7 @@ class mutation_model:
 def parse_args():
     parser = argparse.ArgumentParser(description='A fancy mutation model supporting insertion, deletion and substitution.')
     parser.add_argument('--seed', type=int, default=0)
+    parser.add_argument('--k', type=int, default=21)
     parser.add_argument('--len', type=int, default=10000, help='length of the original string')
     parser.add_argument('--ps', type=float, default=0.1, help='substitution probability')
     parser.add_argument('--pd', type=float, default=0.1, help='deletion probability')
@@ -70,13 +71,13 @@ if __name__ == '__main__':
     p_d = args.pd
     d = args.d
     num_simulations = args.num_sim
-    k = 21
+    k = args.k
 
     mm = mutation_model(seed, orig_len, p_s, p_d, d)
 
     print('The original string is:')
     str_orig = mm.generate_random_string()
-    print( str_orig )
+    #print( str_orig )
 
     print('Now simulating....')
     lengths = []
@@ -86,9 +87,7 @@ if __name__ == '__main__':
         lengths.append( len(mutated_string) )
         kmer_set_orig, num_spurious_orig = generate_kmers(str_orig, k)
         kmer_set_mutated, num_spurious_mutated = generate_kmers(mutated_string, k)
-        #print('Num spurious in orig: ' + str(num_spurious_orig))
-        #print('Num spurious in mutated: ' + str(num_spurious_mutated))
-        list_num_shared_kmers.append( len(kmer_set_orig.intersection(kmer_set_mutated)) )
+        list_num_shared_kmers.append( len(kmer_set_mutated.intersection(kmer_set_orig)) )
 
     print('Average length of the mutated string:')
     print( 1.0*sum(lengths)/len(lengths) )
@@ -98,7 +97,7 @@ if __name__ == '__main__':
     print(exp_len)
 
     print('Average num of shared kmers:')
-    print( 1.0 * sum(list_num_shared_kmers)/len(list_num_shared_kmers) )
+    print( 1.0 * sum(list_num_shared_kmers)/num_simulations )
 
     print('By formula:')
     exp_num_shared = (orig_len-k+1) * (1.0 - p_d - p_s)**k * (1.0 / (1.0+d))**(k-1)
