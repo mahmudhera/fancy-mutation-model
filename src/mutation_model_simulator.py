@@ -22,18 +22,19 @@ class mutation_model:
         self.orig_string = ''.join( np.random.choice(alphabet, size=len) )
         return self.orig_string
 
-    def mutate_string(self):
+    def mutate_string(self, k = None):
         new_string = list(self.orig_string)
         actions = ['sbst', 'delt', 'stay']
+        actions = [2, 3, 0]
 
         actions_chosen = np.random.choice( actions, size=self.orig_length, p=[self.p_s, self.p_d, 1.0-self.p_s-self.p_d] )
         insert_lengths = np.random.geometric(1.0/(1+self.d), size=self.orig_length) - 1
         strings_to_insert = [ ''.join( np.random.choice(alphabet, size=len) ) for len in insert_lengths ]
 
         for i in range( self.orig_length ):
-            if actions_chosen[i] == 'sbst':
+            if actions_chosen[i] == 2:
                 new_string[i] = np.random.choice( substitute_dic[new_string[i]] )
-            if actions_chosen[i] == 'delt':
+            if actions_chosen[i] == 3:
                 new_string[i] = ''
 
         final_str_list = []
@@ -41,7 +42,24 @@ class mutation_model:
             final_str_list.append( new_string[i] )
             final_str_list.append( strings_to_insert[i] )
 
-        return ''.join(final_str_list)
+        if k is None:
+            return ''.join(final_str_list), None, None, None
+
+        num_kmers_single_insertion = 0
+        num_kmers_single_deletion = 0
+        num_kmers_single_substitution = 0
+
+        for i in range( self.orig_length ):
+            sum1 = sum( actions_chosen[i : i+k] )
+            sum2 = sum( insert_lengths[i : i+k-1] )
+            if sum1 == 3 and sum2 == 0:
+                num_kmers_single_deletion += 1
+            if sum1 == 2 and sum2 == 0:
+                num_kmers_single_substitution += 1
+            if sum1 == 0 and sum2 == 1:
+                num_kmers_single_insertion += 1
+
+        return ''.join(final_str_list), num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion
 
 def parse_args():
     parser = argparse.ArgumentParser(description='A fancy mutation model supporting insertion, deletion and substitution.')

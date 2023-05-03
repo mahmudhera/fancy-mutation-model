@@ -80,20 +80,29 @@ if __name__ == '__main__':
     # generate mutation model, generate random str and mutate it randomly
     mm = mutation_model(seed, str_len, p_s, p_d, d)
     str_orig = mm.generate_random_string()
-    mutated_string = mm.mutate_string()
+
+    # for multiple times, mutate string randomly, and see what are the observed num kmers with a single mutation
+    num_runs = 20
+    for i in range(num_runs):
+        mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
+        print(num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion)
+
+    # generate kmers from these two strings
+    # observe three quantities
+    # solve and find three parameters
 
     # TEST
+    '''
     str_orig       = 'ACGTGCAGCT'
     mutated_string = 'ACGTGAGCT'
     k              =  5
 
-    # generate kmers from these two strings
+
     kmers_in_orig_str = string_to_kmers(str_orig, k)
     kmers_in_mutated_str = string_to_kmers(mutated_string, k)
 
-    # observe three quantities
+
     num_observed_only_one_deletion, observed_kmers_only_one_deletion, t1, t2 = observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str)
     print(num_observed_only_one_deletion)
     print(observed_kmers_only_one_deletion)
-
-    # solve and find three parameters
+    '''
