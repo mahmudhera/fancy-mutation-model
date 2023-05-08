@@ -3,14 +3,14 @@ import pandas as pd
 import numpy as np
 
 width = 0.001
-df = pd.read_csv('estimation_records.csv', delimiter=' ', header=None)
+df = pd.read_csv('estimation_records_3_eq_approach.csv', delimiter=' ', header=None)
 df.columns = ['p_s', 'p_d', 'd', 'p_s_est', 'p_d_est', 'd_est']
 print(df)
 
 for p_s in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
     for p_d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
 
-        f_name = f'plots_d_est/ps_{p_s}_pd_{p_d}.pdf'
+        f_name = f'plots_3_eq/plots_d_est/ps_{p_s}_pd_{p_d}.pdf'
         df2 = df[ df['p_s'] == p_s ]
         df2 = df2[ df2['p_d'] == p_d ]
 
@@ -39,7 +39,7 @@ print('Checkpoint 1')
 
 for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
     for p_d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
-        f_name = f'plots_ps_est/d_{d}_pd_{p_d}.pdf'
+        f_name = f'plots_3_eq/plots_ps_est/d_{d}_pd_{p_d}.pdf'
         df2 = df[ df['d'] == d ]
         df2 = df2[ df2['p_d'] == p_d ]
 
@@ -68,7 +68,7 @@ print('Checkpoint 2')
 
 for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
     for p_s in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
-        f_name = f'plots_pd_est/d_{d}_ps_{p_s}.pdf'
+        f_name = f'plots_3_eq/plots_pd_est/d_{d}_ps_{p_s}.pdf'
         df2 = df[ df['d'] == d ]
         df2 = df2[ df2['p_s'] == p_s ]
 
