@@ -1,6 +1,8 @@
 from mutation_model_simulator import mutation_model
 import argparse
 import pygtrie as trie
+import math
+from tqdm import tqdm
 
 
 def parse_arguments():
@@ -74,18 +76,51 @@ def observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str):
 
 
 if __name__ == '__main__':
-    str_len, p_s, p_d, d, k = parse_arguments()
+    #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 0
+    k = 21
+    str_len = 10000
 
-    # generate mutation model, generate random str and mutate it randomly
-    mm = mutation_model(seed, str_len, p_s, p_d, d)
-    str_orig = mm.generate_random_string()
+    # for multiple times, mutate string randomly, and estimate the parameters
+    # repeat for a lot of parameters
+    # store results in a  file
+    f = open('estimation_records.csv', 'w')
+    num_runs = 40
+    for p_s in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_s progress'):
+        for p_d in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_d progress'):
+            for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
+                mm = mutation_model(seed, str_len, p_s, p_d, d)
+                str_orig = mm.generate_random_string()
+                kmers_in_orig_str = string_to_kmers(str_orig, k)
+                K1 = len(kmers_in_orig_str)
 
-    # for multiple times, mutate string randomly, and see what are the observed num kmers with a single mutation
-    num_runs = 20
-    for i in range(num_runs):
-        mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
-        print(num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion)
+                for i in range(num_runs):
+                    mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
+                    kmers_in_mutated_str = string_to_kmers(mutated_string, k)
+
+                    K2 = len(kmers_in_mutated_str)
+                    S, I, D = num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion
+
+                    c2 = 1 - 1.0 * (K2 + k - 1) / (K1 + k - 1)
+                    c3 = 1.0 * S / D
+                    c4 = 1.0 * ( I * k ) / ( S * (k-1) )
+
+                    a = 1 + c3
+                    b = c3 * c4 - 1 + c3 * c3 + c2
+                    c = c2 * c3 * c4
+
+                    try:
+                        sol1 = ( -b + math.sqrt( b**2 - 4 * a * c ) ) / (2 * a)
+                        sol2 = ( -b - math.sqrt( b**2 - 4 * a * c ) ) / (2 * a)
+                    except:
+                        sol1, sol2 = 0.0, 0.0
+
+                    d_est = max(0, max(sol1, sol2))
+                    p_d_est = c2 + d
+                    p_s_est = c3 * p_d_est
+
+                    f.write( f'{p_s} {p_d} {d} {p_s_est} {p_d_est} {d_est}\n' )
+    f.close()
 
     # generate kmers from these two strings
     # observe three quantities
