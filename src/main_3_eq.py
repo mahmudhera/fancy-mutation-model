@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
                     # solve here
                     p_s_est, p_d_est, d_est = fsolve(eqn, (0,0,0))
-                    print(p_s_est, p_d_est, d_est)
+                    #print(p_s_est, p_d_est, d_est)
                     f.write( f'{p_s} {p_d} {d} {p_s_est} {p_d_est} {d_est}\n' )
     f.close()
 
