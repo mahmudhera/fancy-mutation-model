@@ -84,7 +84,7 @@ if __name__ == '__main__':
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    f = open('estimation_records.csv', 'w')
+    f = open('estimation_records_3_eq_approach.csv', 'w')
     num_runs = 40
     for p_s in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_s progress'):
         for p_d in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_d progress'):
