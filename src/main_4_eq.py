@@ -84,8 +84,8 @@ if __name__ == '__main__':
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    f = open('estimation_records_3_eq_approach.csv', 'w')
-    num_runs = 40
+    f = open('estimation_records_4_eq_approach.csv', 'w')
+    num_runs = 50
     for p_s in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_s progress'):
         for p_d in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_d progress'):
             for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
@@ -105,8 +105,8 @@ if __name__ == '__main__':
                     c3 = 1.0 * S / D
                     c4 = 1.0 * ( I * k ) / ( S * (k-1) )
 
-                    a = 1 + c3
-                    b = c3 * c4 - 1 + c2 * c3 + c2
+                    a = 1 + c3 * (1 + c4)
+                    b = c3 * c4 * (c2 + 1) - 1 + c2 * c3 + c2
                     c = c2 * c3 * c4
 
                     try:
