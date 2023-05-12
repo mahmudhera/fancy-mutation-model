@@ -117,7 +117,7 @@ if __name__ == '__main__':
                     except:
                         sol1, sol2 = 0.0, 0.0
 
-                    d_est = max(0, min(sol1, sol2))
+                    d_est = max(0, max(sol1, sol2))
                     p_d_est = c2 + d
                     p_s_est = c3 * p_d_est
 
