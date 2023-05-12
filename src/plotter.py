@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 
 width = 0.001
-df = pd.read_csv('estimation_records.csv', delimiter=' ', header=None)
+df = pd.read_csv('estimation_records_4_eq_approach.csv', delimiter=' ', header=None)
 df.columns = ['p_s', 'p_d', 'd', 'p_s_est', 'p_d_est', 'd_est']
 print(df)
 

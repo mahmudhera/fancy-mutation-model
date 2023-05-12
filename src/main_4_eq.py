@@ -87,7 +87,9 @@ if __name__ == '__main__':
     f = open('estimation_records_4_eq_approach.csv', 'w')
     num_runs = 50
     for p_s in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_s progress'):
+    #for p_s in tqdm([0.03], desc='p_s progress'):
         for p_d in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_d progress'):
+        #for p_d in tqdm([0.08], desc='p_d progress'):
             for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
                 mm = mutation_model(seed, str_len, p_s, p_d, d)
                 str_orig = mm.generate_random_string()
@@ -115,7 +117,7 @@ if __name__ == '__main__':
                     except:
                         sol1, sol2 = 0.0, 0.0
 
-                    d_est = max(0, max(sol1, sol2))
+                    d_est = max(0, min(sol1, sol2))
                     p_d_est = c2 + d
                     p_s_est = c3 * p_d_est
 
