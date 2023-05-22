@@ -96,7 +96,7 @@ if __name__ == '__main__':
     Ss = []
     Ds = []
     Is = []
-    for i in tqdm(range(num_runs)):
+    for i in range(num_runs):
         mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
         kmers_in_mutated_str = string_to_kmers(mutated_string, k)
         K2 = len(kmers_in_mutated_str)
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         Ds.append(D)
         Is.append(I)
 
-        print(np.mean(Ss))
+        print(np.mean(Ds))
 
     S_avg = np.mean(Ss)
     D_avg = np.mean(Ds)
