@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    num_runs = 100
+    num_runs = 1000
     mm = mutation_model(seed, str_len, p_s, p_d, d)
     str_orig = mm.generate_random_string()
     kmers_in_orig_str = string_to_kmers(str_orig, k)
