@@ -93,6 +93,16 @@ if __name__ == '__main__':
     kmers_in_orig_str = string_to_kmers(str_orig, k)
     K1 = len(kmers_in_orig_str)
 
+    def eqn(inputs):
+        p_s, p_d, d = inputs
+        D = k * K1 * (1 - p_s - p_d) ** (k-1) * p_d * (d+1) ** (1.0-k)
+        I = (k-1) * K1 * (1 - p_s - p_d) ** k * d * (d+1) ** (-k)
+        S = k * K1 * (1 - p_s - p_d) ** (k-1) * p_s * (d+1) ** (1.0-k)
+        return [S, I, D]
+
+    S, I, D = eqn((p_s, p_d, d))
+    print(S, I, D)
+
     Ss = []
     Ds = []
     Is = []
@@ -116,12 +126,5 @@ if __name__ == '__main__':
     D_var = np.var(Ds)
     I_var = np.var(Is)
 
-    def eqn(inputs):
-        p_s, p_d, d = inputs
-        D = k * K1 * (1 - p_s - p_d) ** (k-1) * p_d * (d+1) ** (1.0-k)
-        I = (k-1) * K1 * (1 - p_s - p_d) ** k * d * (d+1) ** (-k)
-        S = k * K1 * (1 - p_s - p_d) ** (k-1) * p_s * (d+1) ** (1.0-k)
-        return [S, I, D]
 
-    S, I, D = eqn((p_s, p_d, d))
     print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)
