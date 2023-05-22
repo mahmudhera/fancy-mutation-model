@@ -79,7 +79,7 @@ def observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str):
 if __name__ == '__main__':
     #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 1
-    k = 21
+    k = 31
     str_len = 10000
 
     p_s, p_d, d = 0.04, 0.1, 0.01
@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    num_runs = 1000
+    num_runs = 100
     mm = mutation_model(seed, str_len, p_s, p_d, d)
     str_orig = mm.generate_random_string()
     kmers_in_orig_str = string_to_kmers(str_orig, k)
@@ -105,6 +105,8 @@ if __name__ == '__main__':
         Ss.append(S)
         Ds.append(D)
         Is.append(I)
+
+        print(np.mean(Ss))
 
     S_avg = np.mean(Ss)
     D_avg = np.mean(Ds)
