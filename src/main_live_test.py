@@ -101,7 +101,9 @@ if __name__ == '__main__':
         return [S, I, D]
 
     S, I, D = eqn((p_s, p_d, d))
-    print(S, I, D)
+    print('Formula:')
+    print(S, D, I)
+    print('-----------')
 
     Ss = []
     Ds = []
