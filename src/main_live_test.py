@@ -79,7 +79,7 @@ def observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str):
 if __name__ == '__main__':
     #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 1
-    k = 21
+    k = 31
     str_len = 10000
 
     p_s, p_d, d = 0.02, 0.08, 0.05
@@ -93,11 +93,26 @@ if __name__ == '__main__':
     kmers_in_orig_str = string_to_kmers(str_orig, k)
     K1 = len(kmers_in_orig_str)
 
+    def eqn(inputs):
+        p_s, p_d, d = inputs
+        D = k * K1 * (1 - p_s - p_d) ** (k-1) * p_d * (d+1) ** (1.0-k)
+        I = (k-1) * K1 * (1 - p_s - p_d) ** k * d * (d+1) ** (-k)
+        S = k * K1 * (1 - p_s - p_d) ** (k-1) * p_s * (d+1) ** (1.0-k)
+        return [S, I, D]
+
+    S, I, D = eqn((p_s, p_d, d))
+    print('Formula:')
+    print(S, D, I)
+    print('-----------')
+
     Ss = []
     Ds = []
     Is = []
+<<<<<<< HEAD
     c3s = []
     c4s = []
+=======
+>>>>>>> 16ba46b855a80d5e4f45537f83ff5eeefe039f2a
     for i in range(num_runs):
         mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
         kmers_in_mutated_str = string_to_kmers(mutated_string, k)
@@ -108,6 +123,7 @@ if __name__ == '__main__':
         Ds.append(D)
         Is.append(I)
 
+<<<<<<< HEAD
         c2 = 1.0 - 1.0 * (K2 + k - 1) / (K1 + k - 1)
         c3 = 1.0 * S / D
         c4 = 1.0 * I * k / ( S * (k-1) )
@@ -125,6 +141,9 @@ if __name__ == '__main__':
 
     print(np.mean(Is))
     print(np.mean(Ss))
+=======
+        print(np.mean(Ds))
+>>>>>>> 16ba46b855a80d5e4f45537f83ff5eeefe039f2a
 
     S_avg = np.mean(Ss)
     D_avg = np.mean(Ds)
@@ -134,12 +153,10 @@ if __name__ == '__main__':
     D_var = np.var(Ds)
     I_var = np.var(Is)
 
-    def eqn(inputs):
-        p_s, p_d, d = inputs
-        D = k * K1 * (1 - p_s - p_d) ** (k-1) * p_d * (d+1) ** (1.0-k)
-        I = (k-1) * K1 * (1 - p_s - p_d) ** k * d * (d+1) ** (-k)
-        S = k * K1 * (1 - p_s - p_d) ** (k-1) * p_s * (d+1) ** (1.0-k)
-        return [S, I, D]
 
+<<<<<<< HEAD
     S, I, D = eqn((p_s, p_d, d))
     #print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)
+=======
+    print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)
+>>>>>>> 16ba46b855a80d5e4f45537f83ff5eeefe039f2a
