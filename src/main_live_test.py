@@ -82,12 +82,12 @@ if __name__ == '__main__':
     k = 21
     str_len = 10000
 
-    p_s, p_d, d = 0.04, 0.1, 0.01
+    p_s, p_d, d = 0.02, 0.08, 0.05
 
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    num_runs = 1000
+    num_runs = 120
     mm = mutation_model(seed, str_len, p_s, p_d, d)
     str_orig = mm.generate_random_string()
     kmers_in_orig_str = string_to_kmers(str_orig, k)
@@ -96,7 +96,9 @@ if __name__ == '__main__':
     Ss = []
     Ds = []
     Is = []
-    for i in tqdm(range(num_runs)):
+    c3s = []
+    c4s = []
+    for i in range(num_runs):
         mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
         kmers_in_mutated_str = string_to_kmers(mutated_string, k)
         K2 = len(kmers_in_mutated_str)
@@ -105,6 +107,24 @@ if __name__ == '__main__':
         Ss.append(S)
         Ds.append(D)
         Is.append(I)
+
+        c2 = 1.0 - 1.0 * (K2 + k - 1) / (K1 + k - 1)
+        c3 = 1.0 * S / D
+        c4 = 1.0 * I * k / ( S * (k-1) )
+        #print( p_s/p_d, c3 )
+        c3s.append(c3)
+        c4s.append(c4)
+        c4_true = (1 - p_s - p_d) * d / (p_s * (d+1))
+        #print(c4_true, c4)
+        #print(p_d - d, c2)
+
+        I_formula = K1 * (k-1) * (1 - p_s - p_d) ** k * d / ( (d+1)**k )
+        S_formula = K1 * k * (1 - p_s - p_d) ** (k-1) * p_s / ( (d+1)**(k-1) )
+
+        print(I_formula, I, S_formula, S)
+
+    print(np.mean(Is))
+    print(np.mean(Ss))
 
     S_avg = np.mean(Ss)
     D_avg = np.mean(Ds)
@@ -122,4 +142,4 @@ if __name__ == '__main__':
         return [S, I, D]
 
     S, I, D = eqn((p_s, p_d, d))
-    print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)
+    #print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)

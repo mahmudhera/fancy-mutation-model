@@ -79,23 +79,24 @@ if __name__ == '__main__':
     #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 0
     k = 21
-    str_len = 10000
+    str_len = 100000
 
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    f = open('estimation_records_4_eq_approach.csv', 'w')
-    num_runs = 50
-    for p_s in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_s progress'):
-    #for p_s in tqdm([0.03], desc='p_s progress'):
-        for p_d in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_d progress'):
-        #for p_d in tqdm([0.08], desc='p_d progress'):
+    f = open('estimation_records_4_eq_approach_new.csv', 'w')
+    num_runs = 1
+    #for p_s in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_s progress'):
+    for p_s in tqdm([0.02]):
+        #for p_d in tqdm([0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1], desc='p_d progress'):
+        for p_d in tqdm([0.08]):
             for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
                 mm = mutation_model(seed, str_len, p_s, p_d, d)
                 str_orig = mm.generate_random_string()
                 kmers_in_orig_str = string_to_kmers(str_orig, k)
                 K1 = len(kmers_in_orig_str)
 
+                #for i in tqdm(range(num_runs)):
                 for i in range(num_runs):
                     mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
                     kmers_in_mutated_str = string_to_kmers(mutated_string, k)
@@ -117,9 +118,34 @@ if __name__ == '__main__':
                     except:
                         sol1, sol2 = 0.0, 0.0
 
-                    d_est = max(0, max(sol1, sol2))
-                    p_d_est = c2 + d
-                    p_s_est = c3 * p_d_est
+                    d1 = sol1
+                    p_d1 = c2 + d1
+                    p_s1 = c3 * p_d1
+                    d2 = sol2
+                    p_d2 = c2 + d2
+                    p_s2 = c3 * p_d2
+
+                    ratio1 = p_s1/p_d1
+                    ratio2 = p_s2/p_d2
+                    ratio_true = S/D
+                    I1 = K1 * (k-1) * (1 - p_s1 - p_d1)**k * d1 / (d1+1)**k
+                    I2 = K1 * (k-1) * (1 - p_s2 - p_d2)**k * d2 / (d2+1)**k
+                    S1 = K1 * k * (1 - p_s1 - p_d1)**(k-1) * p_s1 / (d1+1)**(k-1)
+                    S2 = K1 * k * (1 - p_s2 - p_d2)**(k-1) * p_s2 / (d2+1)**(k-1)
+                    D1 = K1 * k * (1 - p_s1 - p_d1)**(k-1) * p_d1 / (d1+1)**(k-1)
+                    D2 = K1 * k * (1 - p_s2 - p_d2)**(k-1) * p_d2 / (d2+1)**(k-1)
+
+                    if abs(ratio1 - ratio_true) < abs(ratio2 - ratio_true):
+                        d_est, p_s_est, p_d_est = d1, p_s1, p_d1
+                    else:
+                        d_est, p_s_est, p_d_est = d2, p_s2, p_d2
+
+                    #print(ratio1, ratio2, ratio_true, d1, d2, d_est)
+                    # ratio same
+                    #print(d1, p_s1, p_d1, d2, p_s2, p_d2)
+                    # sum of roots not useful
+                    print(I, I1, I2, S, S1, S2, D, D1, D2)
+
 
                     f.write( f'{p_s} {p_d} {d} {p_s_est} {p_d_est} {d_est}\n' )
     f.close()
