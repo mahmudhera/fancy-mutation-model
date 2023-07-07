@@ -59,14 +59,15 @@ class mutation_model:
             if sum1 == 0 and sum2 == 1:
                 num_kmers_single_insertion += 1
 
-        num_k_1_mers_single_substitution = 0
+        k = int(k/2)
+        num_small_mers_single_substitution = 0
         for i in range( self.orig_length ):
             sum1 = sum( actions_chosen[i : i+k] )
             sum2 = sum( insert_lengths[i : i+k-1] )
             if sum1 == 2 and sum2 == 0:
-                num_k_1_mers_single_substitution += 1
+                num_small_mers_single_substitution += 1
 
-        return ''.join(final_str_list), num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution
+        return ''.join(final_str_list), num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_small_mers_single_substitution
 
 def parse_args():
     parser = argparse.ArgumentParser(description='A fancy mutation model supporting insertion, deletion and substitution.')
