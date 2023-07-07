@@ -96,11 +96,12 @@ if __name__ == '__main__':
                 K1 = len(kmers_in_orig_str)
 
                 for i in range(num_runs):
-                    mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
+                    mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution = mm.mutate_string(k)
                     kmers_in_mutated_str = string_to_kmers(mutated_string, k)
 
                     K2 = len(kmers_in_mutated_str)
-                    S, I, D = num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion
+                    S, I, D, S_smaller = num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution
 
-                    f.write( f'{p_s} {p_d} {d} {S} {D} {I} {K1} {k} {S/(K1 * k)} {D/(K1 * k)} {I/(K1 * k - K1)}\n' )
+                    f.write( f'{p_s} {p_d} {d} {S} {D} {I} {K1} {k} {S_smaller} {S/(K1 * k)} {D/(K1 * k)} {I/(K1 * k - K1)}\n' )
+                    f.flush()
     f.close()

@@ -108,11 +108,8 @@ if __name__ == '__main__':
     Ss = []
     Ds = []
     Is = []
-<<<<<<< HEAD
     c3s = []
     c4s = []
-=======
->>>>>>> 16ba46b855a80d5e4f45537f83ff5eeefe039f2a
     for i in range(num_runs):
         mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion = mm.mutate_string(k)
         kmers_in_mutated_str = string_to_kmers(mutated_string, k)
@@ -123,7 +120,6 @@ if __name__ == '__main__':
         Ds.append(D)
         Is.append(I)
 
-<<<<<<< HEAD
         c2 = 1.0 - 1.0 * (K2 + k - 1) / (K1 + k - 1)
         c3 = 1.0 * S / D
         c4 = 1.0 * I * k / ( S * (k-1) )
@@ -141,9 +137,6 @@ if __name__ == '__main__':
 
     print(np.mean(Is))
     print(np.mean(Ss))
-=======
-        print(np.mean(Ds))
->>>>>>> 16ba46b855a80d5e4f45537f83ff5eeefe039f2a
 
     S_avg = np.mean(Ss)
     D_avg = np.mean(Ds)
@@ -154,9 +147,5 @@ if __name__ == '__main__':
     I_var = np.var(Is)
 
 
-<<<<<<< HEAD
     S, I, D = eqn((p_s, p_d, d))
     #print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)
-=======
-    print(S, S_avg, S_var**0.5, D, D_avg, D_var**0.5, I, I_avg, I_var**0.5)
->>>>>>> 16ba46b855a80d5e4f45537f83ff5eeefe039f2a
