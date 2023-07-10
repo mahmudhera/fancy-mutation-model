@@ -3,6 +3,15 @@ import numpy as np
 
 if __name__ == '__main__':
     df = pd.read_csv('observations.csv', delimiter=' ', header=None)
+
+    ps_test = 0.03
+    pd_test = 0.01
+    d_test = 0.01
+
+    df = df[ df[0] == ps_test ]
+    df = df[ df[1] == pd_test ]
+    df = df[ df[2] == d_test ]
+
     pss = df[0].tolist()
     pds = df[1].tolist()
     ds  = df[2].tolist()
@@ -48,4 +57,12 @@ if __name__ == '__main__':
                 solution_ratio = candidate_ratio
                 solution = (p_s_est, p_d_est, d_est)
 
-        print(ps, pd, d, solution[0], solution[1], solution[2])
+        print('---')
+        print(ps, pd, d, solution[0], solution[1], solution[2], S, D, I, K1, k, S_smaller)
+        #print(all_solutions)
+        print(p_d_ests)
+        print(coeffs)
+        val = (1.0*(k-1)/k)**k - (1.0*(k-1)/k)**(k-1) + (S_norm + D_norm + I_norm)
+        print(val, (k-1)**(k-1)/k**k)
+        val2 = (1.0*(k-1)/k)**k - (1.0*(k-1)/k)**(k-1)
+        print(val2)
