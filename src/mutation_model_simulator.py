@@ -67,7 +67,7 @@ class mutation_model:
             if sum1 == 2 and sum2 == 0:
                 num_small_mers_single_substitution += 1
 
-        return ''.join(final_str_list), num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_small_mers_single_substitution
+        return ''.join(final_str_list), num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_small_mers_single_substitution, len(final_str_list)
 
 def parse_args():
     parser = argparse.ArgumentParser(description='A fancy mutation model supporting insertion, deletion and substitution.')

@@ -84,24 +84,24 @@ if __name__ == '__main__':
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    f = open('observations.csv', 'w')
+    f = open('observations_with_k2.csv', 'w')
 
-    num_runs = 20
-    for p_s in tqdm([0.01*(i+1) for i in range(10)], desc='p_s progress'):
-        for p_d in tqdm([0.01*(i+1) for i in range(10)], desc='p_d progress'):
-            for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
+    num_runs = 2
+    for p_s in tqdm([0.01*(i+1) for i in range(3)], desc='p_s progress'):
+        for p_d in tqdm([0.01*(i+1) for i in range(3)], desc='p_d progress'):
+            for d in [0.01, 0.02, 0.03]:
                 mm = mutation_model(seed, str_len, p_s, p_d, d)
                 str_orig = mm.generate_random_string()
                 kmers_in_orig_str = string_to_kmers(str_orig, k)
                 K1 = len(kmers_in_orig_str)
 
                 for i in range(num_runs):
-                    mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution = mm.mutate_string(k)
+                    mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution, len_mutated_str = mm.mutate_string(k)
                     kmers_in_mutated_str = string_to_kmers(mutated_string, k)
 
                     K2 = len(kmers_in_mutated_str)
                     S, I, D, S_smaller = num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution
 
-                    f.write( f'{p_s} {p_d} {d} {S} {D} {I} {K1} {k} {S_smaller} {S/(K1 * k)} {D/(K1 * k)} {I/(K1 * k - K1)}\n' )
+                    f.write( f'{p_s} {p_d} {d} {S} {D} {I} {K1} {K2} {k} {S_smaller} {S/(K1 * k)} {D/(K1 * k)} {I/(K1 * k - K1)}\n' )
                     f.flush()
     f.close()
