@@ -79,17 +79,17 @@ if __name__ == '__main__':
     #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 0
     k = 21
-    str_len = 10000000
+    str_len = 1000000
 
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
     f = open('observations_with_k2.csv', 'w')
 
-    num_runs = 2
-    for p_s in tqdm([0.01*(i+1) for i in range(1)], desc='p_s progress'):
-        for p_d in tqdm([0.01*(i+1) for i in range(1)], desc='p_d progress'):
-            for d in [0.01]:
+    num_runs = 20
+    for p_s in tqdm([0.01*(i+1) for i in range(5)], desc='p_s progress'):
+        for p_d in tqdm([0.01*(i+1) for i in range(5)], desc='p_d progress'):
+            for d in [0.01*(i+1) for i in range(5)]:
                 mm = mutation_model(seed, str_len, p_s, p_d, d)
                 str_orig = mm.generate_random_string()
                 kmers_in_orig_str = string_to_kmers(str_orig, k)
