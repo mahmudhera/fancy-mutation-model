@@ -59,7 +59,7 @@ class mutation_model:
             if sum1 == 0 and sum2 == 1:
                 num_kmers_single_insertion += 1
 
-        k = int(k/2)
+        k = int((k+1)/2)
         num_small_mers_single_substitution = 0
         for i in range( self.orig_length ):
             sum1 = sum( actions_chosen[i : i+k] )

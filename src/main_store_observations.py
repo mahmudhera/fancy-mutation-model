@@ -79,12 +79,12 @@ if __name__ == '__main__':
     #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 0
     k = 21
-    str_len = 1000000
+    str_len = 10000
 
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    f = open('observations_with_k2.csv', 'w')
+    f = open('observations_with_k2_and_special_khalved.csv', 'w')
 
     num_runs = 20
     for p_s in tqdm([0.01*(i+1) for i in range(5)], desc='p_s progress'):
