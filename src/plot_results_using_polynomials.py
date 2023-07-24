@@ -8,15 +8,15 @@ df.columns = ['p_s', 'p_d', 'd', 'p_s_est', 'p_d_est', 'd_est']
 #print(df)
 
 file_serializer = 0
-for p_s in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
-    for p_d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
+for p_s in [0.01, 0.02, 0.03, 0.04, 0.05]:
+    for p_d in [0.01, 0.02, 0.03, 0.04, 0.05]:
         f_name = f'plots_polynomials/plots_d_est/{file_serializer:02d}_ps_{p_s}_pd_{p_d}.pdf'
         file_serializer += 1
 
         df2 = df[ df['p_s'] == p_s ]
         df2 = df2[ df2['p_d'] == p_d ]
 
-        ds = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
+        ds = [0.01, 0.02, 0.03, 0.04, 0.05]
         d_ests = []
         d_est_stdvs = []
 
@@ -47,15 +47,15 @@ print('Checkpoint 1')
 #exit(0)
 
 file_serializer = 0
-for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
-    for p_d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
+for d in [0.01, 0.02, 0.03, 0.04, 0.05]:
+    for p_d in [0.01, 0.02, 0.03, 0.04, 0.05]:
         f_name = f'plots_polynomials/plots_ps_est/{file_serializer:02d}_ps_{p_s}_pd_{p_d}.pdf'
         file_serializer += 1
 
         df2 = df[ df['d'] == d ]
         df2 = df2[ df2['p_d'] == p_d ]
 
-        p_ss = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
+        p_ss = [0.01, 0.02, 0.03, 0.04, 0.05]
         p_s_ests = []
         p_s_est_stdvs = []
 
@@ -79,15 +79,15 @@ for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
 
 print('Checkpoint 2')
 file_serializer = 0
-for d in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
-    for p_s in [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]:
+for d in [0.01, 0.02, 0.03, 0.04, 0.05]:
+    for p_s in [0.01, 0.02, 0.03, 0.04, 0.05]:
         f_name = f'plots_polynomials/plots_pd_est/{file_serializer:02d}_ps_{p_s}_pd_{p_d}.pdf'
         file_serializer += 1
 
         df2 = df[ df['d'] == d ]
         df2 = df2[ df2['p_s'] == p_s ]
 
-        p_ds = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.1]
+        p_ds = [0.01, 0.02, 0.03, 0.04, 0.05]
         p_d_ests = []
         p_d_est_stdvs = []
 
