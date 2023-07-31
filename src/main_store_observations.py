@@ -75,16 +75,25 @@ def observe_kmers_only_one_deletion(kmers_in_orig_str, kmers_in_mutated_str):
 
     return num_observed_only_one_deletion, observed_kmers_only_one_deletion, tree1, tree2
 
+def count_num_kmers_with_starting_character(kmer_list, start_char):
+    count = 0
+    for kmer in kmer_list:
+        if start_char == kmer[0]:
+            count += 1
+    return count
+
 if __name__ == '__main__':
     #str_len, p_s, p_d, d, k = parse_arguments()
     seed = 0
     k = 21
     str_len = 10000
+    mucleotide_frequency = [0.1, 0.2, 0.3, 0.4]
 
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
     # store results in a  file
-    f = open('observations_with_k2_and_special_khalved.csv', 'w')
+    #f = open('observations_with_k2_and_special_khalved.csv', 'w')
+    f = open('observations_with_k1_k2_ka_kc.csv', 'w')
 
     num_runs = 20
     for p_s in tqdm([0.01*(i+1) for i in range(5)], desc='p_s progress'):
@@ -95,13 +104,18 @@ if __name__ == '__main__':
                 kmers_in_orig_str = string_to_kmers(str_orig, k)
                 K1 = len(kmers_in_orig_str)
 
+                KA = count_num_kmers_with_starting_character(kmers_in_orig_str, 'A')
+                KC = count_num_kmers_with_starting_character(kmers_in_orig_str, 'C')
+
                 for i in range(num_runs):
                     mutated_string, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution, len_mutated_str = mm.mutate_string(k)
                     kmers_in_mutated_str = string_to_kmers(mutated_string, k)
 
                     K2 = len(kmers_in_mutated_str)
+                    YA = count_num_kmers_with_starting_character(kmers_in_mutated_str, 'A')
+                    YC = count_num_kmers_with_starting_character(kmers_in_mutated_str, 'C')
                     S, I, D, S_smaller = num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion, num_k_1_mers_single_substitution
 
-                    f.write( f'{p_s} {p_d} {d} {S} {D} {I} {K1} {K2} {k} {S_smaller} {S/(K1 * k)} {D/(K1 * k)} {I/(K1 * k - K1)}\n' )
+                    f.write( f'{p_s} {p_d} {d} {K1} {KA} {KC} {K2} {YA} {YC}\n' )
                     f.flush()
     f.close()

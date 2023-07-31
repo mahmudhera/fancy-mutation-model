@@ -17,9 +17,12 @@ class mutation_model:
         self.d = d
         np.random.seed(seed)
 
-    def generate_random_string(self):
+    def generate_random_string(self, frequency = None):
         len = self.orig_length
-        self.orig_string = ''.join( np.random.choice(alphabet, size=len) )
+        if frequency is None:
+            self.orig_string = ''.join( np.random.choice(alphabet, size=len) )
+        else:
+            self.orig_string = ''.join( np.random.choice(alphabet, size=len, p=frequency) )
         return self.orig_string
 
     def mutate_string(self, k = None):
