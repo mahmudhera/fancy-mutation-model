@@ -87,7 +87,7 @@ if __name__ == '__main__':
     seed = 0
     k = 21
     str_len = 10000
-    mucleotide_frequency = [0.1, 0.2, 0.3, 0.4]
+    nucleotide_frequency = [0.1, 0.2, 0.3, 0.4]
 
     # for multiple times, mutate string randomly, and estimate the parameters
     # repeat for a lot of parameters
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         for p_d in tqdm([0.01*(i+1) for i in range(5)], desc='p_d progress'):
             for d in [0.01*(i+1) for i in range(5)]:
                 mm = mutation_model(seed, str_len, p_s, p_d, d)
-                str_orig = mm.generate_random_string()
+                str_orig = mm.generate_random_string(nucleotide_frequency)
                 kmers_in_orig_str = string_to_kmers(str_orig, k)
                 K1 = len(kmers_in_orig_str)
 
