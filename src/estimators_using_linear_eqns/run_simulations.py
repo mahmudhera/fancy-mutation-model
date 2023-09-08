@@ -1,6 +1,5 @@
 from mutation_model_simulator import mutation_model
 import argparse
-import pygtrie as trie
 import math
 from tqdm import tqdm
 from scipy.optimize import fsolve
