@@ -38,7 +38,7 @@ if __name__ == '__main__':
                             K2 = len(kmers_in_mutated_str)
                             L2 = len(mutated_string)
                             S_obs, I_obs, D_obs = num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion
-                            f_A_dash = mutate_string.count('A')
+                            f_A_dash = mutated_string.count('A')
 
                             f.write( f'{p_s} {p_d} {d} {k} {L} {L2} {K1} {K2} {S_obs} {D_obs} {I_obs} {f_A} {f_A_dash}\n' )
                             f.flush()
