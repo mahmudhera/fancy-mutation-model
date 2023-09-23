@@ -4,6 +4,7 @@
 #include <random>
 #include <unordered_map>
 #include <tuple>
+#include <fstream>
 
 using namespace std;
 
@@ -52,7 +53,7 @@ public:
         return orig_string;
     }
 
-    tuple<string, size_t, size_t, size_t> mutate_string(int k = -1) {
+    tuple<string, size_t, size_t, size_t, size_t, size_t, size_t> mutate_string(int k = -1) {
         string new_string = string(this->orig_string);
         vector<int> actions_chosen(orig_length);
         vector<int> insert_lengths(orig_length);
@@ -80,7 +81,7 @@ public:
 
         // Calculate mutation counts if k is provided
         if (k == -1) {
-            return std::make_tuple(final_str, 0, 0, 0);
+            return std::make_tuple(final_str, 0, 0, 0, 0, 0, 0);
         }
 
         size_t num_kmers_single_insertion = 0;
@@ -105,7 +106,32 @@ public:
             }
         }
 
-        return make_tuple(final_str, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion);
+        size_t num_kmers_single_insertion_special = 0;
+        size_t num_kmers_single_deletion_special = 0;
+        size_t num_kmers_single_substitution_special = 0;
+
+        int short_ksize = (int)( (k+1)/2 );
+
+        for (size_t i = 0; i < orig_length - short_ksize + 1; i++) {
+            int sum1 = 0;
+            int sum2 = 0;
+            for (int j = i; j < i + short_ksize; j++) {
+                sum1 += actions_chosen[j];
+                sum2 += insert_lengths[j];
+            }
+            if (sum1 == 3 && sum2 == 0) {
+                num_kmers_single_deletion_special++;
+            }
+            if (sum1 == 2 && sum2 == 0) {
+                num_kmers_single_substitution_special++;
+            }
+            if (sum1 == 0 && sum2 == 1) {
+                num_kmers_single_insertion_special++;
+            }
+        }
+
+        return make_tuple(final_str, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion,
+            num_kmers_single_substitution_special, num_kmers_single_insertion_special, num_kmers_single_deletion_special);
     }
 
     void test() {
@@ -161,9 +187,17 @@ private:
 };
 
 
-int main()
+int main(int argc, char* argv[])
 {
-    cout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut" << endl;
+    cout << "Usage: ./program_name output_filename" << endl;
+    if (argc < 2) {
+        cout << "Output filename not given" << endl;
+        return 0;
+    }
+    string filename = string(argv[1]);
+    ofstream fout(filename);
+
+    fout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp" << endl;
     size_t num_runs_each_setting = 20;
     int seed = 0;
     int ksizes[] = {21, 31, 41};
@@ -200,39 +234,29 @@ int main()
                                     size_t S = get<1>(mut_res);
                                     size_t I = get<2>(mut_res);
                                     size_t D = get<3>(mut_res);
+                                    size_t S_sp = get<4>(mut_res);
+                                    size_t I_sp = get<5>(mut_res);
+                                    size_t D_sp = get<6>(mut_res);
 
                                     size_t f_A_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'A');
                                     size_t f_C_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'C');
                                     size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
                                     size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
 
-                                    cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
+                                    fout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
                                     << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
                                     L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
                                     << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
                                     << ' ' << f_C_mut << ' ' << f_G_orig << ' ' << f_G_mut << ' '
-                                    << f_T_orig << ' ' << f_T_mut << endl;
+                                    << f_T_orig << ' ' << f_T_mut << ' ' << S_sp << ' ' << D_sp << ' ' << I_sp << endl;
                                 }
                             }
                         }
                     }
                 }
             }
-
         }
     }
 
 
-    /*
-    how to run---
-    mutation_model model(123, 100, 0.1, 0.0, 0.0);
-    model.generate_random_string();
-    auto result = model.mutate_string(5);
-    model.test();
-    cout << get<0>(result) << endl;
-    cout << get<1>(result) << endl;
-    cout << get<2>(result) << endl;
-    cout << get<3>(result) << endl;
-    return 0;
-    */
 }
