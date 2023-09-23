@@ -11,7 +11,7 @@ def string_to_kmers(input_str, k):
     return kmer_list
 
 
-mut_rates = [0.01, 0.05, 0.1]
+mut_rates = [0.01]
 frequency_distr = [0.4, 0.2, 0.3, 0.1]
 
 if __name__ == '__main__':
@@ -20,11 +20,11 @@ if __name__ == '__main__':
     f.write('p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut\n')
     f.flush()
 
-    num_runs = 5
+    num_runs = 1
     seed_to_generate = 0
 
     for k in [21, 31, 41]:
-        for str_len in [10000, 100000, 1000000]:
+        for str_len in [10000]:
             for p_s in tqdm(mut_rates, desc='p_s progress'):
                 for p_d in tqdm(mut_rates, desc='p_d progress'):
                     for d in mut_rates:
