@@ -164,17 +164,17 @@ private:
 int main()
 {
     cout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut" << endl;
-    size_t num_runs_each_setting = 1;
+    size_t num_runs_each_setting = 20;
     int seed = 0;
     int ksizes[] = {21, 31, 41};
     size_t str_lengths[] = {10000, 100000, 1000000};
     vector<double> mutation_rates = {};
-    for (int i = 0; i <= 20; i++) {
+    for (int i = 1; i <= 15; i+=2) {
         mutation_rates.push_back(1.0*i/100);
     }
 
-    for (double freq_A = 0.1; freq_A <= 0.9; freq_A += 0.01) {
-        for (double freq_C = 0.1; freq_A <= 0.9; freq_A += 0.01) {
+    for (double freq_A = 0.1; freq_A <= 0.8; freq_A += 0.1) {
+        for (double freq_C = 0.1; freq_A <= 0.8; freq_A += 0.1) {
             if (freq_A + freq_C >= 1.0) {
                 continue;
             }
