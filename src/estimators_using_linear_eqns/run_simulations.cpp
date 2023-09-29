@@ -189,26 +189,18 @@ private:
 
 int main(int argc, char* argv[])
 {
-    cout << "Usage: ./program_name output_filename" << endl;
-    if (argc < 2) {
-        cout << "Output filename not given" << endl;
-        return 0;
-    }
-    string filename = string(argv[1]);
-    ofstream fout(filename);
-
-    fout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp" << endl;
+    cout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp" << endl;
     size_t num_runs_each_setting = 20;
     int seed = 0;
-    int ksizes[] = {21, 31, 41};
-    size_t str_lengths[] = {10000, 100000, 1000000};
-    vector<double> mutation_rates = {};
-    for (int i = 1; i <= 15; i+=2) {
-        mutation_rates.push_back(1.0*i/100);
-    }
+    int ksizes[] = {21, 31};
+    size_t str_lengths[] = {1000000};
+    vector<double> mutation_rates = {0.01, 0.1};
+    //for (int i = 10; i <= 10; i+=2) {
+    //    mutation_rates.push_back(1.0*i/100);
+    //}
 
-    for (double freq_A = 0.1; freq_A <= 0.8; freq_A += 0.1) {
-        for (double freq_C = 0.1; freq_A <= 0.8; freq_A += 0.1) {
+    for (double freq_A = 0.2; freq_A <= 0.5; freq_A += 0.01) {
+        for (double freq_C = 0.2; freq_C <= 0.5; freq_C += 0.01) {
             if (freq_A + freq_C >= 1.0) {
                 continue;
             }
@@ -243,7 +235,7 @@ int main(int argc, char* argv[])
                                     size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
                                     size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
 
-                                    fout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
+                                    cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
                                     << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
                                     L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
                                     << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
