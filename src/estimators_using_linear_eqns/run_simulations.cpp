@@ -210,40 +210,36 @@ int main(int argc, char* argv[])
 
             for (auto str_len : str_lengths) {
                 for (auto p_s : mutation_rates) {
-                    for (auto p_d : mutation_rates) {
-                        for (auto d : mutation_rates) {
-                            int seed = rand();
-                            mutation_model model(seed, str_len, p_s, p_d, d);
-                            string orig_string = model.generate_random_string(nucloetide_frequencies);
-                            size_t f_A_orig = count(orig_string.begin(), orig_string.end(), 'A');
-                            size_t f_C_orig = count(orig_string.begin(), orig_string.end(), 'C');
-                            size_t f_G_orig = count(orig_string.begin(), orig_string.end(), 'G');
-                            size_t f_T_orig = count(orig_string.begin(), orig_string.end(), 'T');
-                            size_t L = str_len;
-                            for (auto ksize : ksizes) {
-                                for (int i = 0; i < num_runs_each_setting; i++) {
-                                    auto mut_res = model.mutate_string(ksize);
-                                    size_t L2 = get<0>(mut_res).length();
-                                    size_t S = get<1>(mut_res);
-                                    size_t I = get<2>(mut_res);
-                                    size_t D = get<3>(mut_res);
-                                    size_t S_sp = get<4>(mut_res);
-                                    size_t I_sp = get<5>(mut_res);
-                                    size_t D_sp = get<6>(mut_res);
+                    int seed = rand();
+                    mutation_model model(seed, str_len, p_s, p_d, d);
+                    string orig_string = model.generate_random_string(nucloetide_frequencies);
+                    size_t f_A_orig = count(orig_string.begin(), orig_string.end(), 'A');
+                    size_t f_C_orig = count(orig_string.begin(), orig_string.end(), 'C');
+                    size_t f_G_orig = count(orig_string.begin(), orig_string.end(), 'G');
+                    size_t f_T_orig = count(orig_string.begin(), orig_string.end(), 'T');
+                    size_t L = str_len;
+                    for (auto ksize : ksizes) {
+                        for (int i = 0; i < num_runs_each_setting; i++) {
+                            auto mut_res = model.mutate_string(ksize);
+                            size_t L2 = get<0>(mut_res).length();
+                            size_t S = get<1>(mut_res);
+                            size_t I = get<2>(mut_res);
+                            size_t D = get<3>(mut_res);
+                            size_t S_sp = get<4>(mut_res);
+                            size_t I_sp = get<5>(mut_res);
+                            size_t D_sp = get<6>(mut_res);
 
-                                    size_t f_A_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'A');
-                                    size_t f_C_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'C');
-                                    size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
-                                    size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
+                            size_t f_A_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'A');
+                            size_t f_C_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'C');
+                            size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
+                            size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
 
-                                    cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
-                                    << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
-                                    L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
-                                    << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
-                                    << ' ' << f_C_mut << ' ' << f_G_orig << ' ' << f_G_mut << ' '
-                                    << f_T_orig << ' ' << f_T_mut << ' ' << S_sp << ' ' << D_sp << ' ' << I_sp << endl;
-                                }
-                            }
+                            cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
+                            << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
+                            L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
+                            << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
+                            << ' ' << f_C_mut << ' ' << f_G_orig << ' ' << f_G_mut << ' '
+                            << f_T_orig << ' ' << f_T_mut << ' ' << S_sp << ' ' << D_sp << ' ' << I_sp << endl;
                         }
                     }
                 }
