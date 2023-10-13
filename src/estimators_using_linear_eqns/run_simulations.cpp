@@ -212,6 +212,7 @@ int main(int argc, char* argv[])
                 for (auto p_s : mutation_rates) {
                     for (auto p_d : mutation_rates) {
                         for (auto d : mutation_rates) {
+                            int seed = rand();
                             mutation_model model(seed, str_len, p_s, p_d, d);
                             string orig_string = model.generate_random_string(nucloetide_frequencies);
                             size_t f_A_orig = count(orig_string.begin(), orig_string.end(), 'A');
