@@ -210,6 +210,8 @@ int main(int argc, char* argv[])
 
             for (auto str_len : str_lengths) {
                 for (auto p_s : mutation_rates) {
+                    double p_d = p_s;
+                    double d = p_s;
                     int seed = rand();
                     mutation_model model(seed, str_len, p_s, p_d, d);
                     string orig_string = model.generate_random_string(nucloetide_frequencies);
