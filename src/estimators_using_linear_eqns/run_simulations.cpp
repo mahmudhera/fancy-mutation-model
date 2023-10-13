@@ -160,7 +160,9 @@ private:
     // Choose an insertion length following a geometric distribution
     int choose_insert_length() {
         double rand_num = static_cast<double>(rand()) / RAND_MAX;
-        return static_cast<int>(log(rand_num) / log(d/(1.0+d)) );
+        int len = static_cast<int>(log(rand_num) / log(d/(1.0+d)) );
+        if (len < 0) len = 0;
+        return len;
     }
 
     // Generate a random string of a given length
