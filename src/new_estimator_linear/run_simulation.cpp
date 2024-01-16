@@ -204,11 +204,9 @@ int main(int argc, char* argv[])
     int ksizes[] = {21};
     size_t str_lengths[] = {1000000, 100000};
     vector<double> mutation_rates = {};
-    for (int i = 0; i <= 16; i+=2) {
+    for (int i = 1; i <= 15; i+=3) {
         mutation_rates.push_back(1.0*i/100);
     }
-
-    size_t num_instances_done = 0;
 
     for (double freq_A = 0.2; freq_A <= 0.35; freq_A += 0.01) {
         for (double freq_C = freq_A; freq_C <= 0.35; freq_C += 0.01) {
@@ -234,10 +232,6 @@ int main(int argc, char* argv[])
 
                             for (auto ksize : ksizes) {
                                 for (int i = 0; i < num_runs_each_setting; i++) {
-                                    num_instances_done++;
-                                    if (num_instances_done == 10000) {
-                                        return 0;
-                                    }
                                     auto mut_res = model.mutate_string(ksize);
                                     size_t L2 = get<0>(mut_res).length();
                                     size_t S = get<1>(mut_res);
