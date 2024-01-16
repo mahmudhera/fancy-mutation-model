@@ -195,7 +195,10 @@ private:
 
 int main(int argc, char* argv[])
 {
-    cout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp N_shared" << endl;
+    ofstream output_file;
+    output_file.open ("observations");
+    output_file << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp N_shared" << endl;
+
     size_t num_runs_each_setting = 40;
     int seed = 0;
     int ksizes[] = {21};
@@ -250,7 +253,7 @@ int main(int argc, char* argv[])
                                     size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
                                     size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
 
-                                    cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
+                                    output_file << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
                                     << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
                                     L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
                                     << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
@@ -264,4 +267,6 @@ int main(int argc, char* argv[])
             }
         }
     }
+    output_file.close();
+    return 0;
 }
