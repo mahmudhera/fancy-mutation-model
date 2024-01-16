@@ -53,7 +53,7 @@ public:
         return orig_string;
     }
 
-    tuple<string, size_t, size_t, size_t, size_t, size_t, size_t> mutate_string(int k = -1) {
+    tuple<string, size_t, size_t, size_t, size_t, size_t, size_t, size_t> mutate_string(int k = -1) {
         string new_string = string(this->orig_string);
         vector<int> actions_chosen(orig_length);
         vector<int> insert_lengths(orig_length);
@@ -81,12 +81,13 @@ public:
 
         // Calculate mutation counts if k is provided
         if (k == -1) {
-            return std::make_tuple(final_str, 0, 0, 0, 0, 0, 0);
+            return std::make_tuple(final_str, 0, 0, 0, 0, 0, 0, 0);
         }
 
         size_t num_kmers_single_insertion = 0;
         size_t num_kmers_single_deletion = 0;
         size_t num_kmers_single_substitution = 0;
+        size_t num_kmers_no_mutation = 0;
 
         for (size_t i = 0; i < orig_length - k + 1; i++) {
             int sum1 = 0;
@@ -103,6 +104,9 @@ public:
             }
             if (sum1 == 0 && sum2 == 1) {
                 num_kmers_single_insertion++;
+            }
+            if (sum1 == 0 && sum2 == 0) {
+                num_kmers_no_mutation++;
             }
         }
 
@@ -131,7 +135,7 @@ public:
         }
 
         return make_tuple(final_str, num_kmers_single_substitution, num_kmers_single_insertion, num_kmers_single_deletion,
-            num_kmers_single_substitution_special, num_kmers_single_insertion_special, num_kmers_single_deletion_special);
+            num_kmers_single_substitution_special, num_kmers_single_insertion_special, num_kmers_single_deletion_special, num_kmers_no_mutation);
     }
 
     void test() {
@@ -191,18 +195,20 @@ private:
 
 int main(int argc, char* argv[])
 {
-    cout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp" << endl;
-    size_t num_runs_each_setting = 20;
+    cout << "freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp N_shared" << endl;
+    size_t num_runs_each_setting = 40;
     int seed = 0;
-    int ksizes[] = {21, 31};
-    size_t str_lengths[] = {1000000};
+    int ksizes[] = {21};
+    size_t str_lengths[] = {1000000, 100000};
     vector<double> mutation_rates = {};
-    for (int i = 10; i <= 10; i++) {
+    for (int i = 0; i <= 16; i+=2) {
         mutation_rates.push_back(1.0*i/100);
     }
 
-    for (double freq_A = 0.2; freq_A <= 0.5; freq_A += 0.01) {
-        for (double freq_C = 0.2; freq_C <= 0.5; freq_C += 0.01) {
+    size_t num_instances_done = 0;
+
+    for (double freq_A = 0.2; freq_A <= 0.35; freq_A += 0.01) {
+        for (double freq_C = freq_A; freq_C <= 0.35; freq_C += 0.01) {
             if (freq_A + freq_C >= 1.0) {
                 continue;
             }
@@ -212,44 +218,50 @@ int main(int argc, char* argv[])
 
             for (auto str_len : str_lengths) {
                 for (auto p_s : mutation_rates) {
-                    double p_d = p_s;
-                    double d = p_s;
-                    int seed = rand();
-                    mutation_model model(seed, str_len, p_s, p_d, d);
-                    string orig_string = model.generate_random_string(nucloetide_frequencies);
-                    size_t f_A_orig = count(orig_string.begin(), orig_string.end(), 'A');
-                    size_t f_C_orig = count(orig_string.begin(), orig_string.end(), 'C');
-                    size_t f_G_orig = count(orig_string.begin(), orig_string.end(), 'G');
-                    size_t f_T_orig = count(orig_string.begin(), orig_string.end(), 'T');
-                    size_t L = str_len;
-                    for (auto ksize : ksizes) {
-                        for (int i = 0; i < num_runs_each_setting; i++) {
-                            auto mut_res = model.mutate_string(ksize);
-                            size_t L2 = get<0>(mut_res).length();
-                            size_t S = get<1>(mut_res);
-                            size_t I = get<2>(mut_res);
-                            size_t D = get<3>(mut_res);
-                            size_t S_sp = get<4>(mut_res);
-                            size_t I_sp = get<5>(mut_res);
-                            size_t D_sp = get<6>(mut_res);
+                    for (auto p_d : mutation_rates) {
+                        for (auto d : mutation_rates) {
+                            int seed = rand();
+                            mutation_model model(seed, str_len, p_s, p_d, d);
+                            string orig_string = model.generate_random_string(nucloetide_frequencies);
+                            size_t f_A_orig = count(orig_string.begin(), orig_string.end(), 'A');
+                            size_t f_C_orig = count(orig_string.begin(), orig_string.end(), 'C');
+                            size_t f_G_orig = count(orig_string.begin(), orig_string.end(), 'G');
+                            size_t f_T_orig = count(orig_string.begin(), orig_string.end(), 'T');
+                            size_t L = str_len;
 
-                            size_t f_A_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'A');
-                            size_t f_C_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'C');
-                            size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
-                            size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
+                            for (auto ksize : ksizes) {
+                                for (int i = 0; i < num_runs_each_setting; i++) {
+                                    num_instances_done++;
+                                    if (num_instances_done == 10000) {
+                                        return 0;
+                                    }
+                                    auto mut_res = model.mutate_string(ksize);
+                                    size_t L2 = get<0>(mut_res).length();
+                                    size_t S = get<1>(mut_res);
+                                    size_t I = get<2>(mut_res);
+                                    size_t D = get<3>(mut_res);
+                                    size_t S_sp = get<4>(mut_res);
+                                    size_t I_sp = get<5>(mut_res);
+                                    size_t D_sp = get<6>(mut_res);
+                                    size_t N_shared = get<7>(mut_res);
 
-                            cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
-                            << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
-                            L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
-                            << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
-                            << ' ' << f_C_mut << ' ' << f_G_orig << ' ' << f_G_mut << ' '
-                            << f_T_orig << ' ' << f_T_mut << ' ' << S_sp << ' ' << D_sp << ' ' << I_sp << endl;
+                                    size_t f_A_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'A');
+                                    size_t f_C_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'C');
+                                    size_t f_G_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'G');
+                                    size_t f_T_mut = count(get<0>(mut_res).begin(), get<0>(mut_res).end(), 'T');
+
+                                    cout << freq_A << ' ' << freq_C << ' ' << freq_G << ' ' << freq_T << ' '
+                                    << p_s << ' ' << p_d << ' ' << d << ' ' << ksize << ' ' << L << ' ' <<
+                                    L2 << ' ' << L - ksize + 1 << ' ' << L2 - ksize + 1 << ' ' << S << ' ' << D
+                                    << ' ' << I << ' ' << f_A_orig << ' ' << f_A_mut << ' ' << f_C_orig
+                                    << ' ' << f_C_mut << ' ' << f_G_orig << ' ' << f_G_mut << ' '
+                                    << f_T_orig << ' ' << f_T_mut << ' ' << S_sp << ' ' << D_sp << ' ' << I_sp << ' ' << N_shared << endl;
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
-
-
 }
