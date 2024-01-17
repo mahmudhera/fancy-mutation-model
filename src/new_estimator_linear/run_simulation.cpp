@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <tuple>
 #include <fstream>
+#include <algorithm>
+#include <cassert>
 
 using namespace std;
 
@@ -50,6 +52,9 @@ public:
 
         orig_string.shrink_to_fit();
         this->orig_string = orig_string;
+
+        assert(orig_string.length() == orig_length);
+
         return orig_string;
     }
 
