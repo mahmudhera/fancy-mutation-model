@@ -36,7 +36,7 @@ public:
                 orig_string.push_back(alphabet[std::rand() % alphabet.size()]);
             }
         } else {
-            for (size_t i = 0; i < len; i++) {
+            while( orig_string.length() < len ) {
                 double r = static_cast<double>(rand()) / RAND_MAX;
                 double cumulative_prob = 0.0;
 
