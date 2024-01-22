@@ -38,23 +38,31 @@ def solve_using_polynomials(S, D, I, k, K1, S_smaller):
             solution_ratio = candidate_ratio
             solution = (p_s_est, p_d_est, d_est)
 
-    return solution[0]
+    return solution[0], solution[1], solution[2]
 
-def solve_using_half_kmers(k, S_k_half, S_k, K1):
+def solve_using_half_kmers(k, S_k_half, S_k, K1, D_k_half, D_k, L2, L):
     #print(k, S_k_half, S_k, K1)
     #exit(-1)
     try:
         p_s_est = 4.0 * k * S_k_half**2 / ((k+1)**2 * S_k * K1)
+        p_d_est = 4.0 * k * D_k_half**2 / ((k+1)**2 * D_k * K1)
+        d_est   = 1.0*L2/L - 1.0 + p_d_est
     except:
         p_s_est = None
-    return p_s_est
+        p_d_est = None
+        d_est = None
+    return p_s_est, p_d_est, d_est
 
 def solve_using_linear_equations1(f_A, f_A_mut, L, L2, D, S):
     try:
         p_s_est = (f_A_mut - f_A + L/4.0 - L2/4.0) / ( (L - 4 * f_A) * (1.0/3.0 + D/(4.0 * S) ) )
+        p_d_est = 1.0 * D * p_s_est / S
+        d_est   = 1.0*L2/L - 1.0 + p_d_est
     except:
         p_s_est = None
-    return p_s_est
+        p_d_est = None
+        d_est = None
+    return p_s_est, p_d_est, d_est
 
 def solve_using_linear_equations2(f_A, f_A_mut, L, L2, I, N_shared, k):
     try:
@@ -64,7 +72,9 @@ def solve_using_linear_equations2(f_A, f_A_mut, L, L2, I, N_shared, k):
         p_s_est = ( f_A_mut - f_A + f_A * p_d_est - L * d_est / 4.0 ) / a_constant
     except:
         p_s_est = None
-    return p_s_est
+        p_d_est = None
+        d_est = None
+    return p_s_est, p_d_est, d_est
 
 if __name__ == '__main__':
     file_path = 'observations.gz'
@@ -74,6 +84,14 @@ if __name__ == '__main__':
     df_out['p_s_est_poly'] = None
     df_out['p_s_est_linear1'] = None
     df_out['p_s_est_linear2'] = None
+    df_out['p_d_est_halfkmer'] = None
+    df_out['p_d_est_poly'] = None
+    df_out['p_d_est_linear1'] = None
+    df_out['p_d_est_linear2'] = None
+    df_out['d_est_halfkmer'] = None
+    df_out['d_est_poly'] = None
+    df_out['d_est_linear1'] = None
+    df_out['d_est_linear2'] = None
 
     # following are the header columns
     # freq_A freq_C freq_G freq_T p_s p_d d k L L2 K1 K2 E_S E_D E_I f_A_orig f_A_mut f_C_orig f_C_mut f_G_orig f_G_mut f_T_orig f_T_mut S_sp D_sp I_sp N_shared
@@ -109,19 +127,33 @@ if __name__ == '__main__':
         N_shared = row['N_shared']
 
         # solve using half-kmers
-        p_s_est = solve_using_half_kmers(k, S_sp, E_S, K1)
+        S_k_half = S_sp
+        S_k = E_S 
+        D_k_half = D_sp
+        D_k = E_D
+        p_s_est, p_d_est, d_est = solve_using_half_kmers(k, S_k_half, S_k, K1, D_k_half, D_k, L2, L)
         df_out.at[index, 'p_s_est_halfkmer'] = p_s_est
+        df_out.at[index, 'p_d_est_halfkmer'] = p_d_est
+        df_out.at[index, 'd_est_halfkmer'] = d_est
 
         # solve using polynomials
-        p_s_est = solve_using_polynomials(E_S, E_D, E_I, k, K1, S_sp)
+        p_s_est, p_d_est, d_est = solve_using_polynomials(E_S, E_D, E_I, k, K1, S_sp)
         df_out.at[index, 'p_s_est_poly'] = p_s_est
+        df_out.at[index, 'p_d_est_poly'] = p_d_est
+        df_out.at[index, 'd_est_poly'] = d_est
 
         # solve using linear equations
-        p_s_est = solve_using_linear_equations1(f_A_orig, f_A_mut, L, L2, E_D, E_S)
+        p_s_est, p_d_est, d_est = solve_using_linear_equations1(f_A_orig, f_A_mut, L, L2, E_D, E_S)
         df_out.at[index, 'p_s_est_linear1'] = p_s_est
+        df_out.at[index, 'p_d_est_linear1'] = p_d_est
+        df_out.at[index, 'd_est_linear1'] = d_est
         
         # solve using new linear equations
-        p_s_est = solve_using_linear_equations2(f_A_orig, f_A_mut, L, L2, E_I, N_shared, k)
+        p_s_est, p_d_est, d_est = solve_using_linear_equations2(f_A_orig, f_A_mut, L, L2, E_I, N_shared, k)
         df_out.at[index, 'p_s_est_linear2'] = p_s_est
+        df_out.at[index, 'p_d_est_linear2'] = p_d_est
+        df_out.at[index, 'd_est_linear2'] = d_est
 
-    df_out.to_csv('observations_with_estimates.gz', compression='gzip', sep=' ', index=False)
+    # only keep the columns freq_A, freq_C, p_s, p_d, d, k, L, p_s_est_halfkmer, p_s_est_poly, p_s_est_linear1, p_s_est_linear2, p_d_est_halfkmer, p_d_est_poly, p_d_est_linear1, p_d_est_linear2, d_est_halfkmer, d_est_poly, d_est_linear1, d_est_linear2
+    df_out = df_out[['freq_A', 'freq_C', 'p_s', 'p_d', 'd', 'k', 'L', 'p_s_est_halfkmer', 'p_s_est_poly', 'p_s_est_linear1', 'p_s_est_linear2', 'p_d_est_halfkmer', 'p_d_est_poly', 'p_d_est_linear1', 'p_d_est_linear2', 'd_est_halfkmer', 'd_est_poly', 'd_est_linear1', 'd_est_linear2']]
+    df_out.to_csv('observations_with_estimates_of_d.gz', compression='gzip', sep=' ', index=False)
